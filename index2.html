@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aplicación del Clima</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Aplicación del Clima</h1>
+
+ 
+    <div class="form-group">
+      <label for="searchInput">Buscar por nombre:</label>
+      <input type="text" class="form-control" id="searchInput" placeholder="Ingrese un nombre">
+      <small id="searchHelp" class="form-text text-muted">Puede buscar por cualquier criterio relevante según la API de clima.</small>
+    </div>
+
+    <ul id="weatherList" class="list-group"></ul>
+
+
+    <div id="weatherDetails" style="display: none;">
+      <h2>Detalles del Clima</h2>
+      <p id="weatherDescription"></p>
+      <p id="temperature"></p>
+      <p id="humidity"></p>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function() {
+
+      $('#searchInput').on('keyup', function() {
+        var searchQuery = $(this).val();
+
+  
+        $.get('https://api.weatherstack.com/current?search=' + searchQuery, function(data) {
+
+          $('#weatherList').empty();
+          $('#weatherDetails').hide();
+
+    
+          if (data && data.length > 0) {
+      
+            data.forEach(function(element) {
+              var listItem = $('<li>').addClass('list-group-item').text(element.name);
+
+     
+              var detailsButton = $('<button>').addClass('btn btn-primary btn-sm float-right').text('Detalles');
+              detailsButton.click(function() {
+         
+                $('#weatherDescription').text(element.description);
+                $('#temperature').text('Temperatura: ' + element.temperature + '°C');
+                $('#humidity').text('Humedad: ' + element.humidity + '%');
+                $('#weatherDetails').show();
+              });
+
+              listItem.append(detailsButton);
+              $('#weatherList').append(listItem);
+            });
+          } else {
+
+            $('#weatherList').append($('<li>').addClass('list-group-item').text('No se encontraron resultados.'));
+          }
+        }).fail(function() {
+        
+          $('#weatherList').append($('<li>').addClass('list-group
